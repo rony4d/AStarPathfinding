@@ -2,30 +2,32 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AStarAlgorithm
 {
     class Program
     {
-
+        
         static void Main(string[] args)
         {
 
-            Grid grid = new Grid(rows:20,columns:20);
+            Grid grid = new Grid(rows:50,columns:50);
             grid.InitializeGrid();
 
             Node source = new Node() { Location = new Tuple<int, int>(0, 0) };
 
-            Node destination = new Node() { Location = new Tuple<int, int>(19, 19) };
+            Node destination = new Node() { Location = new Tuple<int, int>(49, 49) };
 
             Text.WriteLine($"Grid contains {grid.Nodes.Length} Nodes", ConsoleColor.Blue);
 
 
             Text.WriteLine("-------------------------------- GRID VIEW ----------------------------------------", ConsoleColor.Cyan);
 
-            RandomizeGridNodes(grid, source, destination, maxObstacles: 200);
+            RandomizeGridNodes(grid, source, destination, maxObstacles: 1250);
 
-            BuildGridVisuals(grid, source, destination);
+            //  NOTE: Consider commenting BuildingVisuals when running large grid sizes because Console Window might not display well
+            //BuildGridVisuals(grid, source, destination);
 
             Text.WriteLine("--------------------------------A*STAR MAGIC ----------------------------------------", ConsoleColor.Cyan);
 
@@ -33,15 +35,29 @@ namespace AStarAlgorithm
             Stopwatch stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            
-            grid.AStarSearch(grid, source, destination);
-            
-            stopwatch.Stop();
-            Text.WriteLine($"Time elapsed {stopwatch.Elapsed}", ConsoleColor.White);
-            
-            
-            BuildGridVisuals(grid, source, destination);
 
+            //  Simulate Single Agent Path Finding 
+            //  Change to true if you want to test this
+            if (false)
+            {
+                grid.AStarSearch(grid, source, destination);
+
+            }
+
+            //  Run multiple path finding operations in Parallel to simulate multiple Agents finding path simultaneously
+            //  Change to true if you want to test this
+            if (true)
+            {
+                Parallel.For(0, 10, index => { grid.AStarSearch(grid, source, destination); });
+            }
+
+
+            stopwatch.Stop();
+
+            Text.WriteLine($"Time elapsed {stopwatch.Elapsed}", ConsoleColor.White);
+
+            //  NOTE: Consider commenting BuildingVisuals when running large grid sizes because Console Window might not display well
+            //BuildGridVisuals(grid, source, destination);
         }
 
         static void BuildGridVisuals(Grid grid,Node source, Node destination)
@@ -119,6 +135,8 @@ namespace AStarAlgorithm
             }
 
         }
+
+
 
     }
 
